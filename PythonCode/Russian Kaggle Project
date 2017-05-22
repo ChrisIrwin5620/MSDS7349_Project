@@ -1,0 +1,48 @@
+# Load Pandas library
+import pandas as pd
+
+#Load numpy library
+import numpy as np
+
+import matplotlib as mpl 
+
+import matplotlib.pyplot as plt 
+
+#Create Russian Data Frame using Read_CSV
+dfRussianData = pd.read_csv('/users/cmirwin/desktop/Smu Data Sets/Data Mining/RussianData/Train.csv') # read in the csv file
+
+#Show headers and first 10 records of the data set 
+dfRussianData.head(10)
+
+#Get specific column data types
+#This is only the first 15 columns as the data set contains 292 total columns
+#dfRussianData.info(15)
+
+#Look to see if there are any missing values in data frame
+dfRussianData.isnull().values.any()
+
+#Find all columns with missing data 
+MissingRussianData = dfRussianData.isnull().sum()
+
+#Remove all Columns with a value equal to 0 and short data
+MissingRussianData = MissingRussianData.drop(MissingRussianData[MissingRussianData == 0].index).sort_values(ascending=False)
+
+#Remote Null values that are created by import
+df = dfRussianData.replace(to_replace='nan',value= np.nan) 
+
+#Descriptive stats for Russian Dat set
+df.describe() # scroll over to see the values
+
+# and fill in the null values for the columns that have missing values 
+dfRussianDataUpdated = df.fillna(df.median()) 
+
+#Shows the newly created stats
+dfRussianDataUpdated.describe()
+
+  #Find the median value from the original data set 
+buildYearMedian = df['build_year'].median()
+
+#Find the number of homes that have a build year of 0 or a value greater than 2018
+dfRussianDataUpdated[(dfRussianDataUpdated['build_year'] == 0) | (dfRussianDataUpdated['build_year'] > 2018)] = buildYearMedian
+
+dfRussianDataUpdated['build_year'].describe()
